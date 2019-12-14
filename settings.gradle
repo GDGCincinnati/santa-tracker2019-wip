@@ -1,0 +1,2 @@
+rootProject.name='Santa Tracker'
+include ':app'
