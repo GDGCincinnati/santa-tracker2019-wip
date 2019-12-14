@@ -14,7 +14,11 @@
         android:layout_height="match_parent" />
 
     <FrameLayout
-        android:id="@+id/test"
+        android:id="@+id/frameLayout"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="32dp"
         android:layout_width="match_parent"
         android:layout_height="100dp"/>
 
