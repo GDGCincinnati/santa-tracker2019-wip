@@ -4,9 +4,16 @@ import android.media.SoundPool
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
+import androidx.compose.Model
+import androidx.compose.unaryPlus
 import androidx.ui.core.Text
-import androidx.ui.core.setContent
+import androidx.ui.core.dp
+import androidx.ui.foundation.shape.corner.RoundedCornerShape
+import androidx.ui.layout.Column
+import androidx.ui.layout.Padding
+import androidx.ui.layout.Row
 import androidx.ui.material.MaterialTheme
+import androidx.ui.material.surface.Card
 import androidx.ui.tooling.preview.Preview
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -20,6 +27,8 @@ import com.google.firebase.database.*
 class MainActivity : AppCompatActivity() {
     private var map: GoogleMap? = null
     private var marker: Marker? = null
+
+    private var santaLocation = SantaLocation(LatLng(39.10, -84.51))
 
     private var locationRef: DatabaseReference? = null
     private val locationListener: ValueEventListener by lazy {
@@ -74,6 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateMapAndMarker(position: LatLng) {
+        santaLocation.latLng = position
         map?.let { map ->
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 9f))
 
@@ -99,18 +109,40 @@ class MainActivity : AppCompatActivity() {
         override fun onCancelled(error: DatabaseError) = Unit
     }
 
-    private fun <T> DataSnapshot.getNonNullValue(type: Class<T>): T = getValue(type) ?: throw IllegalStateException()
+    private fun <T> DataSnapshot.getNonNullValue(type: Class<T>): T = getValue(type)
+            ?: throw IllegalStateException()
 }
+
 
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
 }
 
+@Model
+data class SantaLocation(var latLng: LatLng)
+
+@Composable
+fun SantaLocationCard(santaLocation: SantaLocation) {
+    val typography = +MaterialTheme.typography()
+
+    Card(shape = RoundedCornerShape(8.dp)) {
+        Padding(padding = 8.dp) {
+            Row {
+                Column {
+                    Text("Santa Location", style = typography.h4)
+                    Text("Latitude: ${santaLocation.latLng.latitude}", style = typography.body1)
+                    Text("Longitude: ${santaLocation.latLng.longitude}", style = typography.body1)
+                }
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 fun DefaultPreview() {
     MaterialTheme {
-        Greeting("Android")
+        SantaLocationCard(SantaLocation(LatLng(39.10, -84.51)))
     }
 }
